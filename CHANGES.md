@@ -28,6 +28,12 @@ breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
 
+### Changes between 3.0.6 and 3.0.6+quic [11 Oct 2022]
+
+ * Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 3.0.5 and 3.0.6 [11 Oct 2022]
 
  * OpenSSL supports creating a custom cipher via the legacy
