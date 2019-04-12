@@ -830,6 +830,10 @@ Don't use POSIX IO capabilities.
 
 Don't build support for Pre-Shared Key based ciphersuites.
 
+### no-quic
+
+Don't build support for QUIC API from BoringSSL.
+
 ### no-rdrand
 
 Don't use hardware RDRAND capabilities.
