@@ -28,6 +28,12 @@ breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
 
+### Changes between 3.0 beta 1 and beta 1+quic [17 Jun 2021]
+
+* Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 1.1.1 and 3.0 beta 1 [17 Jun 2021]
 
  * Add a configurable flag to output date formats as ISO 8601. Does not
