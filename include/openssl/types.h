@@ -232,6 +232,8 @@ typedef struct ossl_decoder_ctx_st OSSL_DECODER_CTX;
 
 typedef struct ossl_self_test_st OSSL_SELF_TEST;
 
+typedef struct ssl_quic_method_st SSL_QUIC_METHOD;
+
 #ifdef  __cplusplus
 }
 #endif
