@@ -67,4 +67,10 @@ __owur const SSL_METHOD *OSSL_QUIC_client_thread_method(void);
 #  endif
 
 # endif /* OPENSSL_NO_QUIC */
-#endif
+# ifndef OPENSSL_NO_BORING_QUIC_API
+
+/* moved from crypto.h.in to avoid breaking FIPS checksums */
+# define OPENSSL_INFO_QUIC                     2000
+
+# endif /* OPENSSL_NO_BORING_QUIC_API */
+#endif /* OPENSSL_QUIC_H */

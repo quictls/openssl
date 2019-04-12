@@ -26,6 +26,11 @@ OpenSSL Releases
 OpenSSL 3.3
 -----------
 
+### Changes Between 3.3.0 and 3.3.0+quic
+ * Add QUIC API support from BoringSSL
+
+ *Todd Short*
+
 ### Changes between 3.2 and 3.3.0 [9 Apr 2024]
 
  * The `-verify` option to the `openssl crl` and `openssl req` will make

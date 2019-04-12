@@ -958,6 +958,14 @@ int ossl_statem_client_construct_message(SSL_CONNECTION *s,
         break;
 
     case TLS_ST_CW_END_OF_EARLY_DATA:
+#ifndef OPENSSL_NO_BORING_QUIC_API
+        /* QUIC does not send EndOfEarlyData, RFC9001 S8.3 */
+        if (SSL_CONNECTION_IS_QUIC(s)) {
+            *confunc = NULL;
+            *mt = SSL3_MT_DUMMY;
+            break;
+        }
+#endif
         *confunc = tls_construct_end_of_early_data;
         *mt = SSL3_MT_END_OF_EARLY_DATA;
         break;

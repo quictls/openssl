@@ -228,6 +228,12 @@ int ssl_set_new_record_layer(SSL_CONNECTION *s, int version, int direction,
 {
     return 0;
 }
+#ifndef OPENSSL_NO_BORING_QUIC_API
+int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
+{
+    return 1;
+}
+#endif
 
 /* End of mocked out code */
 

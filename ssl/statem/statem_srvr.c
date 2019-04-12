@@ -81,7 +81,8 @@ static int ossl_statem_server13_read_transition(SSL_CONNECTION *s, int mt)
                 return 1;
             }
             break;
-        } else if (s->ext.early_data == SSL_EARLY_DATA_ACCEPTED) {
+        } else if (s->ext.early_data == SSL_EARLY_DATA_ACCEPTED
+                   && !SSL_CONNECTION_IS_QUIC(s)) {
             if (mt == SSL3_MT_END_OF_EARLY_DATA) {
                 st->hand_state = TLS_ST_SR_END_OF_EARLY_DATA;
                 return 1;
@@ -1024,6 +1025,16 @@ WORK_STATE ossl_statem_server_post_work(SSL_CONNECTION *s, WORK_STATE wst)
                         SSL3_CC_APPLICATION | SSL3_CHANGE_CIPHER_SERVER_WRITE))
             /* SSLfatal() already called */
             return WORK_ERROR;
+
+#ifndef OPENSSL_NO_BORING_QUIC_API
+            if (SSL_CONNECTION_IS_QUIC(s) && s->ext.early_data == SSL_EARLY_DATA_ACCEPTED) {
+                s->early_data_state = SSL_EARLY_DATA_FINISHED_READING;
+                if (!ssl->method->ssl3_enc->change_cipher_state(
+                        s, SSL3_CC_HANDSHAKE | SSL3_CHANGE_CIPHER_SERVER_READ))
+                    /* SSLfatal() already called */
+                    return WORK_ERROR;
+            }
+#endif
         }
         break;
 
@@ -1648,6 +1659,15 @@ MSG_PROCESS_RETURN tls_process_client_hello(SSL_CONNECTION *s, PACKET *pkt)
                 goto err;
             }
         }
+#ifndef OPENSSL_NO_BORING_QUIC_API
+        if (SSL_CONNECTION_IS_QUIC(s)) {
+            /* Any other QUIC checks on ClientHello here */
+            if (clienthello->session_id_len > 0) {
+                SSLfatal(s, SSL_AD_ILLEGAL_PARAMETER, SSL_R_LENGTH_MISMATCH);
+                goto err;
+            }
+        }
+#endif
     }
 
     if (!PACKET_copy_all(&compression, clienthello->compressions,
