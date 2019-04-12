@@ -28,6 +28,12 @@ breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
 
+### Changes between 3.0 beta 2 and beta 2+quic [17 Jun 2021]
+
+* Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 1.1.1 and 3.0 beta 2 [29 Jul 2021]
 
  * The ERR_GET_FUNC() function was removed.  With the loss of meaningful
