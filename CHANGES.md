@@ -28,6 +28,12 @@ breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
 
+### Changes between 3.0.7 and 3.0.7+quic [1 Nov 2022]
+
+ * Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 3.0.6 and 3.0.7 [1 Nov 2022]
 
  * Fixed two buffer overflows in punycode decoding functions.
