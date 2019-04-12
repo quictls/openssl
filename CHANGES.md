@@ -22,6 +22,12 @@ OpenSSL Releases
 OpenSSL 3.1
 -----------
 
+### Changes between 3.1.5 and 3.1.5+quic [30 Jan 2024]
+
+ * Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 3.1.4 and 3.1.5 [30 Jan 2024]
 
  * A file in PKCS12 format can contain certificates and keys and may come from
