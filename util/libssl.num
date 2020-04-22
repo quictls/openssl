@@ -500,7 +500,7 @@ SSL_CTX_set_post_handshake_auth         500	1_1_1	EXIST::FUNCTION:
 SSL_get_signature_type_nid              501	1_1_1a	EXIST::FUNCTION:
 SSL_quic_read_level                     20000	1_1_1i	EXIST::FUNCTION:QUIC
 SSL_set_quic_transport_params           20001	1_1_1i	EXIST::FUNCTION:QUIC
-SSL_CIPHER_get_prf_nid                  20002	1_1_1i	EXIST::FUNCTION:
+SSL_CIPHER_get_prf_nid                  20002	1_1_1i	EXIST::FUNCTION:QUIC
 SSL_is_quic                             20003	1_1_1i	EXIST::FUNCTION:QUIC
 SSL_get_peer_quic_transport_params      20004	1_1_1i	EXIST::FUNCTION:QUIC
 SSL_quic_write_level                    20005	1_1_1i	EXIST::FUNCTION:QUIC
