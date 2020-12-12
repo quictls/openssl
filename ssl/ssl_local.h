@@ -721,6 +721,7 @@ typedef enum tlsext_index_en {
     TLSEXT_IDX_cryptopro_bug,
     TLSEXT_IDX_early_data,
     TLSEXT_IDX_certificate_authorities,
+    TLSEXT_IDX_quic_transport_params_draft,
     TLSEXT_IDX_quic_transport_params,
     TLSEXT_IDX_padding,
     TLSEXT_IDX_psk,
@@ -1398,6 +1399,8 @@ struct ssl_st {
 #ifndef OPENSSL_NO_QUIC
         uint8_t *quic_transport_params;
         size_t quic_transport_params_len;
+        uint8_t *peer_quic_transport_params_draft;
+        size_t peer_quic_transport_params_draft_len;
         uint8_t *peer_quic_transport_params;
         size_t peer_quic_transport_params_len;
 #endif
@@ -1407,6 +1410,14 @@ struct ssl_st {
     OSSL_ENCRYPTION_LEVEL quic_read_level;
     OSSL_ENCRYPTION_LEVEL quic_write_level;
     OSSL_ENCRYPTION_LEVEL quic_latest_level_received;
+    /*
+     * defaults to 0, but can be set to:
+     * - TLSEXT_TYPE_quic_transport_parameters_draft
+     * - TLSEXT_TYPE_quic_transport_parameters
+     * Client: if 0, send both
+     * Server: if 0, use same version as client sent
+     */
+    int quic_transport_version;
     BUF_MEM *quic_buf;          /* buffer incoming handshake messages */
     QUIC_DATA *quic_input_data_head;
     QUIC_DATA *quic_input_data_tail;
