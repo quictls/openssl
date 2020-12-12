@@ -242,6 +242,8 @@ static const ERR_STRING_DATA SSL_str_reasons[] = {
     {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_MISSING_PARAMETERS), "missing parameters"},
     {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_MISSING_PSK_KEX_MODES_EXTENSION),
     "missing psk kex modes extension"},
+    {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_MISSING_QUIC_TRANSPORT_PARAMETERS_EXTENSION),
+    "missing quic transport parameters extension"},
     {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_MISSING_RSA_CERTIFICATE),
     "missing rsa certificate"},
     {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_MISSING_RSA_ENCRYPTING_CERT),
