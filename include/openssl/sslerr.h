@@ -71,6 +71,7 @@ int ERR_load_SSL_strings(void);
 # define SSL_F_FINAL_KEY_SHARE                            503
 # define SSL_F_FINAL_MAXFRAGMENTLEN                       557
 # define SSL_F_FINAL_PSK                                  639
+# define SSL_F_FINAL_QUIC_TRANSPORT_PARAMS                3012
 # define SSL_F_FINAL_RENEGOTIATE                          483
 # define SSL_F_FINAL_SERVER_NAME                          558
 # define SSL_F_FINAL_SIG_ALGS                             497
@@ -329,6 +330,7 @@ int ERR_load_SSL_strings(void);
 # define SSL_F_TLS_CONSTRUCT_CTOS_PSK                     501
 # define SSL_F_TLS_CONSTRUCT_CTOS_PSK_KEX_MODES           509
 # define SSL_F_TLS_CONSTRUCT_CTOS_QUIC_TRANSPORT_PARAMS   3008
+# define SSL_F_TLS_CONSTRUCT_CTOS_QUIC_TRANSPORT_PARAMS_DRAFT 3013
 # define SSL_F_TLS_CONSTRUCT_CTOS_RENEGOTIATE             473
 # define SSL_F_TLS_CONSTRUCT_CTOS_SCT                     474
 # define SSL_F_TLS_CONSTRUCT_CTOS_SERVER_NAME             475
@@ -369,6 +371,7 @@ int ERR_load_SSL_strings(void);
 # define SSL_F_TLS_CONSTRUCT_STOC_NEXT_PROTO_NEG          457
 # define SSL_F_TLS_CONSTRUCT_STOC_PSK                     504
 # define SSL_F_TLS_CONSTRUCT_STOC_QUIC_TRANSPORT_PARAMS   3009
+# define SSL_F_TLS_CONSTRUCT_STOC_QUIC_TRANSPORT_PARAMS_DRAFT 3014
 # define SSL_F_TLS_CONSTRUCT_STOC_RENEGOTIATE             458
 # define SSL_F_TLS_CONSTRUCT_STOC_SERVER_NAME             459
 # define SSL_F_TLS_CONSTRUCT_STOC_SESSION_TICKET          460
@@ -395,6 +398,7 @@ int ERR_load_SSL_strings(void);
 # define SSL_F_TLS_PARSE_CTOS_PSK                         505
 # define SSL_F_TLS_PARSE_CTOS_PSK_KEX_MODES               572
 # define SSL_F_TLS_PARSE_CTOS_QUIC_TRANSPORT_PARAMS       3010
+# define SSL_F_TLS_PARSE_CTOS_QUIC_TRANSPORT_PARAMS_DRAFT 3015
 # define SSL_F_TLS_PARSE_CTOS_RENEGOTIATE                 464
 # define SSL_F_TLS_PARSE_CTOS_SERVER_NAME                 573
 # define SSL_F_TLS_PARSE_CTOS_SESSION_TICKET              574
@@ -414,6 +418,7 @@ int ERR_load_SSL_strings(void);
 # define SSL_F_TLS_PARSE_STOC_NPN                         582
 # define SSL_F_TLS_PARSE_STOC_PSK                         502
 # define SSL_F_TLS_PARSE_STOC_QUIC_TRANSPORT_PARAMS       3011
+# define SSL_F_TLS_PARSE_STOC_QUIC_TRANSPORT_PARAMS_DRAFT 3016
 # define SSL_F_TLS_PARSE_STOC_RENEGOTIATE                 448
 # define SSL_F_TLS_PARSE_STOC_SCT                         564
 # define SSL_F_TLS_PARSE_STOC_SERVER_NAME                 583
@@ -606,6 +611,7 @@ int ERR_load_SSL_strings(void);
 # define SSL_R_MISSING_FATAL                              256
 # define SSL_R_MISSING_PARAMETERS                         290
 # define SSL_R_MISSING_PSK_KEX_MODES_EXTENSION            310
+# define SSL_R_MISSING_QUIC_TRANSPORT_PARAMETERS_EXTENSION 801
 # define SSL_R_MISSING_RSA_CERTIFICATE                    168
 # define SSL_R_MISSING_RSA_ENCRYPTING_CERT                169
 # define SSL_R_MISSING_RSA_SIGNING_CERT                   170
