@@ -2566,7 +2566,7 @@ __owur int SSL_process_quic_post_handshake(SSL *ssl);
 __owur int SSL_is_quic(SSL *ssl);
 
 /* BoringSSL API */
-__owur void SSL_set_quic_use_legacy_codepoint(SSL *ssl, int use_legacy);
+void SSL_set_quic_use_legacy_codepoint(SSL *ssl, int use_legacy);
 
 /*
  * Set an explicit value that you want to use
