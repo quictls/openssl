@@ -10387,10 +10387,10 @@ static int test_quic_api_version(int clnt, int srvr)
                                              &clientssl, NULL, NULL))
             || !TEST_true(SSL_set_quic_transport_params(serverssl,
                                                         (unsigned char*)server_str,
-                                                        sizeof(server_str)))
+                                                        strlen(server_str)+1))
             || !TEST_true(SSL_set_quic_transport_params(clientssl,
                                                         (unsigned char*)client_str,
-                                                        sizeof(client_str)))
+                                                        strlen(client_str)+1))
             || !TEST_true(SSL_set_app_data(serverssl, clientssl))
             || !TEST_true(SSL_set_app_data(clientssl, serverssl))
             || !TEST_true(test_quic_api_set_versions(clientssl, clnt))
@@ -10406,10 +10406,10 @@ static int test_quic_api_version(int clnt, int srvr)
         goto end;
 
     SSL_get_peer_quic_transport_params(serverssl, &peer_str, &peer_str_len);
-    if (!TEST_mem_eq(peer_str, peer_str_len, client_str, sizeof(client_str)))
+    if (!TEST_mem_eq(peer_str, peer_str_len, client_str, strlen(client_str)+1))
         goto end;
     SSL_get_peer_quic_transport_params(clientssl, &peer_str, &peer_str_len);
-    if (!TEST_mem_eq(peer_str, peer_str_len, server_str, sizeof(server_str)))
+    if (!TEST_mem_eq(peer_str, peer_str_len, server_str, strlen(server_str)+1))
         goto end;
 
     /* Deal with two NewSessionTickets */
