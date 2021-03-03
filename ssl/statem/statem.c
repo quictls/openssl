@@ -930,7 +930,7 @@ int statem_flush(SSL *s)
 #ifndef OPENSSL_NO_QUIC
     if (SSL_IS_QUIC(s)) {
         if (!s->quic_method->flush_flight(s)) {
-            SSLerr(SSL_F_STATEM_FLUSH, ERR_R_INTERNAL_ERROR);
+            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
             return 0;
         }
     } else
