@@ -40,7 +40,7 @@ extern "C" {
  *  major minor fix final patch/beta)
  */
 # define OPENSSL_VERSION_NUMBER  0x1010114fL
-# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1t  7 Feb 2023"
+# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1t+quic  7 Feb 2023"
 
 /*-
  * The macros below are to be used for shared library (.so, .dll, ...)
@@ -92,7 +92,7 @@ extern "C" {
  * should only keep the versions that are binary compatible with the current.
  */
 # define SHLIB_VERSION_HISTORY ""
-# define SHLIB_VERSION_NUMBER "1.1"
+# define SHLIB_VERSION_NUMBER "81.1.1"
 
 
 #ifdef  __cplusplus
