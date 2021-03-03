@@ -54,14 +54,14 @@ int ssl3_do_write(SSL *s, int type)
             if (!ret) {
                 ret = -1;
                 /* QUIC can't sent anything out sice the above failed */
-                SSLerr(SSL_F_SSL3_DO_WRITE, ERR_R_INTERNAL_ERROR);
+                ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
             } else {
                 written = s->init_num;
             }
         } else {
             /* QUIC doesn't use ChangeCipherSpec */
             ret = -1;
-            SSLerr(SSL_F_SSL3_DO_WRITE, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+            ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
         }
     } else
 #endif
