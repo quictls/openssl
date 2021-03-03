@@ -1873,7 +1873,7 @@ int ssl_read_internal(SSL *s, void *buf, size_t num, size_t *readbytes)
 {
 #ifndef OPENSSL_NO_QUIC
     if (SSL_IS_QUIC(s)) {
-        SSLerr(SSL_F_SSL_READ_INTERNAL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+        ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
         return -1;
     }
 #endif
@@ -2010,7 +2010,7 @@ static int ssl_peek_internal(SSL *s, void *buf, size_t num, size_t *readbytes)
 {
 #ifndef OPENSSL_NO_QUIC
     if (SSL_IS_QUIC(s)) {
-        SSLerr(SSL_F_SSL_PEEK_INTERNAL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+        ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
         return -1;
     }
 #endif
@@ -2076,7 +2076,7 @@ int ssl_write_internal(SSL *s, const void *buf, size_t num, size_t *written)
 {
 #ifndef OPENSSL_NO_QUIC
     if (SSL_IS_QUIC(s)) {
-        SSLerr(SSL_F_SSL_WRITE_INTERNAL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+        ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
         return -1;
     }
 #endif
