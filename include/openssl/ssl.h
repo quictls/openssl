@@ -2488,6 +2488,14 @@ __owur int SSL_get_peer_quic_transport_version(const SSL *ssl);
 
 int SSL_CIPHER_get_prf_nid(const SSL_CIPHER *c);
 
+/*
+ * This define is really the inverse of the OPENSSL_NO_QUIC define. It
+ * allows easier detection of whether the QUIC APIs are available in
+ * a particular OpenSSL instance when the default assumption is that
+ * they are.
+ */
+#define OPENSSL_HAS_QUIC
+
 #  endif
 
 # ifdef  __cplusplus
