@@ -143,6 +143,9 @@ int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
         return 0;
     }
 
+    if (len == 0)
+        return 1;
+
     if (ssl->quic_buf == NULL) {
         BUF_MEM *buf;
         if ((buf = BUF_MEM_new()) == NULL) {
