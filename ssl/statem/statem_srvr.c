@@ -964,6 +964,16 @@ WORK_STATE ossl_statem_server_post_work(SSL *s, WORK_STATE wst)
                         SSL3_CC_APPLICATION | SSL3_CHANGE_CIPHER_SERVER_WRITE))
             /* SSLfatal() already called */
             return WORK_ERROR;
+
+#ifndef OPENSSL_NO_QUIC
+            if (SSL_IS_QUIC(s) && s->ext.early_data == SSL_EARLY_DATA_ACCEPTED) {
+                s->early_data_state = SSL_EARLY_DATA_FINISHED_READING;
+                if (!s->method->ssl3_enc->change_cipher_state(
+                        s, SSL3_CC_HANDSHAKE | SSL3_CHANGE_CIPHER_SERVER_READ))
+                    /* SSLfatal() already called */
+                    return WORK_ERROR;
+            }
+#endif
         }
         break;
 
