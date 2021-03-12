@@ -9870,8 +9870,7 @@ static int test_quic_api_version(int clnt, int srvr)
         goto end;
 
     /* Deal with two NewSessionTickets */
-    if (!TEST_true(SSL_process_quic_post_handshake(clientssl))
-            || !TEST_true(SSL_process_quic_post_handshake(clientssl)))
+    if (!TEST_true(SSL_process_quic_post_handshake(clientssl)))
         goto end;
 
     /* Dummy handshake call should succeed */
@@ -10063,8 +10062,7 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
         return 0;
 
     /* Deal with two NewSessionTickets */
-    if (!TEST_true(SSL_process_quic_post_handshake(*clientssl))
-            || !TEST_true(SSL_process_quic_post_handshake(*clientssl)))
+    if (!TEST_true(SSL_process_quic_post_handshake(*clientssl)))
         return 0;
 
     *sess = SSL_get1_session(*clientssl);

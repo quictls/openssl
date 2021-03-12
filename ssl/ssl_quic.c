@@ -334,20 +334,19 @@ int SSL_process_quic_post_handshake(SSL *ssl)
     }
 
     /* if there is no data, return success as BoringSSL */
-    if (ssl->quic_input_data_head == NULL)
-        return 1;
-    
-    /*
-     * This is always safe (we are sure to be at a record boundary) because
-     * SSL_read()/SSL_write() are never used for QUIC connections -- the
-     * application data is handled at the QUIC layer instead.
-     */
-    ossl_statem_set_in_init(ssl, 1);
-    ret = ssl->handshake_func(ssl);
-    ossl_statem_set_in_init(ssl, 0);
+    while (ssl->quic_input_data_head != NULL) {
+        /*
+         * This is always safe (we are sure to be at a record boundary) because
+         * SSL_read()/SSL_write() are never used for QUIC connections -- the
+         * application data is handled at the QUIC layer instead.
+         */
+        ossl_statem_set_in_init(ssl, 1);
+        ret = ssl->handshake_func(ssl);
+        ossl_statem_set_in_init(ssl, 0);
 
-    if (ret <= 0)
-        return 0;
+        if (ret <= 0)
+            return 0;
+    }
     return 1;
 }
 
