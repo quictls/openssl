@@ -396,6 +396,7 @@ static const EXTENSION_DEFINITION ext_defs[] = {
     },
 #else
     INVALID_EXTENSION,
+    INVALID_EXTENSION,
 #endif
     {
         /* Must be immediately before pre_shared_key */
