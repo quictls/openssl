@@ -586,7 +586,7 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
 #ifndef OPENSSL_NO_QUIC
             } else if (SSL_IS_QUIC(s)) {
                 /* QUIC behaves like DTLS -- all in one go. */
-                ret = quic_get_message(s, &mt, &len);
+                ret = quic_get_message(s, &mt);
 #endif
             } else {
                 ret = tls_get_message_header(s, &mt);
@@ -636,8 +636,11 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
                  * opportunity to do any further processing.
                  */
                 ret = dtls_get_message_body(s, &len);
-            } else if (!SSL_IS_QUIC(s)) {
-                /* We already got this above for QUIC */
+#ifndef OPENSSL_NO_QUIC
+            } else if (SSL_IS_QUIC(s)) {
+                ret = quic_get_message_body(s, &len);
+#endif
+            } else {
                 ret = tls_get_message_body(s, &len);
             }
             if (ret == 0) {
