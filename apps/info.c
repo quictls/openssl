@@ -10,6 +10,7 @@
 #include <openssl/crypto.h>
 #include "apps.h"
 #include "progs.h"
+#include <openssl/quic.h>
 
 typedef enum OPTION_choice {
     OPT_COMMON,
