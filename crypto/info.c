@@ -14,6 +14,7 @@
 #include "internal/cryptlib.h"
 #include "e_os.h"
 #include "buildinf.h"
+#include <openssl/quic.h>
 
 #if defined(__arm__) || defined(__arm) || defined(__aarch64__)
 # include "arm_arch.h"
