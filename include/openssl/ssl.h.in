@@ -2528,6 +2528,15 @@ const char *OSSL_default_ciphersuites(void);
  * ssl_encryption_level_t represents a specific QUIC encryption level used to
  * transmit handshake messages. BoringSSL has this as an 'enum'.
  */
+#include <openssl/quic.h>
+
+/* Used by Chromium/QUIC - moved from evp.h to avoid breaking FIPS checksums */
+# define X25519_PRIVATE_KEY_LEN          32
+# define X25519_PUBLIC_VALUE_LEN         32
+
+/* moved from types.h to avoid breaking FIPS checksums */
+typedef struct ssl_quic_method_st SSL_QUIC_METHOD;
+
 typedef enum ssl_encryption_level_t {
     ssl_encryption_initial = 0,
     ssl_encryption_early_data,
