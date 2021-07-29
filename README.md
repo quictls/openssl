@@ -55,11 +55,10 @@ Our plan is to always rebase on top of an upstream release tag. In particular:
 - The changes for QUIC will always be at the tip of the branch -- you will know what
   is from the original OpenSSL and what is for QUIC.
 - New versions are quickly created once upstream creates a new tag.
-- The use of git commands (such as "cherry") can be used to ensure that all changes
-
-have moved forward with minimal or no changes. You will be able to see
-QUIC: Add X" on all branches and the commit itself will be nearly identical on all
-branches, and any changes to that can be easily identified.
+- The use of git commands (such as `cherry`) can be used to ensure that all changes
+  have moved forward with minimal or no changes. You will be able to see
+  "QUIC: Add X" on all branches and the commit itself will be nearly identical on
+  all branches, and any changes to that can be easily identified.
 
 What about library names?
 -------------------------
@@ -70,7 +69,7 @@ and `3` (for the to-be-3.0 branch). We will be prefixing 81 (ASCII for 'Q') to
 the version numbers to generate a unique version number.
 
 - libcrypto.so.81.3 vs libcrypto.so.3
-- libcrypto.so.81.1.1 vs libcrypto.so.1.1   libcrypto.so.3
+- libcrypto.so.81.1.1 vs libcrypto.so.1.1
 - libssl.so.81.3 vs libssl.so.3
 - libssl.so.81.1.1 vs libsslo.so.1.1
 
