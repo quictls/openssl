@@ -486,7 +486,7 @@ my @disable_cascades = (
     "ssl3-method"       => [ "ssl3" ],
     "zlib"              => [ "zlib-dynamic" ],
     "des"               => [ "mdc2" ],
-    "ec"                => [ "ecdsa", "ecdh" ],
+    "ec"                => [ "ecdsa", "ecdh", "quic" ],
 
     "dgram"             => [ "dtls", "sctp" ],
     "sock"              => [ "dgram" ],
