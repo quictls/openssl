@@ -82,10 +82,8 @@ SSL_quic_write_level() returns the current write encryption level.
 
 SSL_provide_quic_data() is used to provide data from QUIC CRYPTO frames to the
 state machine, at a particular encryption level B<level>. It is an error to
-call this function outside of the handshake or with an encryption level other
-than the current read level. The application must buffer and consolidate any
-frames with less than four bytes of content.  It returns one on success and
-zero on error.
+call this function with an encryption level less than the current read level.
+It returns one on success and zero on error.
 
 SSL_process_quic_post_handshake() processes any data that QUIC has provided
 after the handshake has completed. This includes NewSessionTicket messages
