@@ -139,8 +139,8 @@ generating their own errors.
 
 See L<https://tools.ietf.org/html/RFC9001#section-4.1> for more details.
 
-To avoid DoS attacks, the QUIC implementation must limit the amount of data
-being queued up. The implementation can call
+To avoid amplifying DoS attacks, the QUIC implementation must limit the amount
+of data being queued up. The implementation can call
 SSL_quic_max_handshake_flight_len() to get the maximum buffer length at each
 encryption level.
 
