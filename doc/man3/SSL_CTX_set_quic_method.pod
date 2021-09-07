@@ -74,7 +74,7 @@ SSL_quic_max_handshake_flight_len() returns the maximum number of bytes
 that may be received at the given encryption level. This function should be
 used to limit buffering in the QUIC implementation.
 
-See https://tools.ietf.org/html/draft-ietf-quic-transport-27#section-4.
+See L<https://tools.ietf.org/html/RFC9000#section-4>.
 
 SSL_quic_read_level() returns the current read encryption level.
 
@@ -120,7 +120,7 @@ These APIs are implementations of BoringSSL's QUIC APIs.
 
 QUIC acts as an underlying transport for the TLS 1.3 handshake. The following
 functions allow a QUIC implementation to serve as the underlying transport as
-described in draft-ietf-quic-tls.
+described in RFC9001.
 
 When configured for QUIC, SSL_do_handshake() will drive the handshake as
 before, but it will not use the configured B<BIO>. It will call functions from
@@ -139,18 +139,17 @@ pass the active write level to add_handshake_data() when writing data. Callers
 can use SSL_quic_write_level() to query the active write level when
 generating their own errors.
 
-See https://tools.ietf.org/html/draft-ietf-quic-tls-27#section-4.1 for more
-details.
+See L<https://tools.ietf.org/html/RFC9001#section-4.1> for more details.
 
 To avoid DoS attacks, the QUIC implementation must limit the amount of data
 being queued up. The implementation can call
 SSL_quic_max_handshake_flight_len() to get the maximum buffer length at each
 encryption level.
 
-draft-ietf-quic-tls defines a new TLS extension "quic_transport_parameters"
+RFC9001 defines a new TLS extension "quic_transport_parameters"
 used by QUIC for each endpoint to unilaterally declare its supported
 transport parameters. The contents of the extension are specified in
-https://tools.ietf.org/html/draft-ietf-quic-transport-27#section-18 (as
+L<https://tools.ietf.org/html/RFC9000#section-18> (as
 a sequence of tag/length/value parameters) along with the interpretation of the
 various parameters and the rules for their processing.
 
