@@ -103,7 +103,7 @@ the client will send both extensions.
 SSL_get_quic_transport_version() returns the value set by
 SSL_set_quic_transport_version().
 
-SSL_get_peer_quic_transport_version() returns the version the that was 
+SSL_get_peer_quic_transport_version() returns the version the that was
 negotiated.
 
 SSL_set_quic_early_data_enabled() enables QUIC early data if a nonzero
