@@ -1969,7 +1969,7 @@ int tls_parse_stoc_early_data(SSL *s, PACKET *pkt, unsigned int context,
          * QUIC server must send 0xFFFFFFFF or it's a PROTOCOL_VIOLATION
          * per RFC9001 S4.6.1
          */
-        if (s->quic_method != NULL && max_early_data != 0xFFFFFFFF) {
+        if (SSL_IS_QUIC(s) && max_early_data != 0xFFFFFFFF) {
             SSLfatal(s, SSL_AD_ILLEGAL_PARAMETER, SSL_R_INVALID_MAX_EARLY_DATA);
             return 0;
         }
