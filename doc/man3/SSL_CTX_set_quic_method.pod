@@ -209,9 +209,6 @@ only available in the client to server direction. The other secret will be
 NULL. The server acknowledges such data at B<ssl_encryption_application>,
 which will be configured in the same SSL_do_handshake() call.
 
-This function should use SSL_get_current_cipher() to determine the TLS
-cipher suite.
-
 add_handshake_data() adds handshake data to the current flight at the given
 encryption level. It returns one on success and zero on error.
 
