@@ -151,7 +151,7 @@ extern "C" {
 /* Temporary extension type */
 # define TLSEXT_TYPE_renegotiate                 0xff01
 
-/* ExtensionType value from draft-ietf-quic-tls-27 */
+    /* ExtensionType value from RFC9001 */
 # define TLSEXT_TYPE_quic_transport_parameters_draft   0xffa5
 # define TLSEXT_TYPE_quic_transport_parameters         0x0039
 
