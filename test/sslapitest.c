@@ -10831,6 +10831,7 @@ static int test_quic_api_version(int clnt, int srvr)
     static const char *client_str = "CLIENT";
     const uint8_t *peer_str;
     size_t peer_str_len;
+    int err;
 
     TEST_info("original clnt=0x%X, srvr=0x%X\n", clnt, srvr);
 
@@ -10853,8 +10854,10 @@ static int test_quic_api_version(int clnt, int srvr)
             || !TEST_true(SSL_set_app_data(clientssl, serverssl))
             || !TEST_true(test_quic_api_set_versions(clientssl, clnt))
             || !TEST_true(test_quic_api_set_versions(serverssl, srvr))
-            || !TEST_true(create_ssl_connection(serverssl, clientssl,
-                                                SSL_ERROR_NONE))
+            || !TEST_int_eq(err = SSL_accept(serverssl), -1)
+            || !TEST_int_eq(SSL_get_error(serverssl, err), SSL_ERROR_WANT_READ)
+            || !TEST_true(create_bare_ssl_connection(serverssl, clientssl,
+                                              SSL_ERROR_NONE, 0))
             || !TEST_true(SSL_version(serverssl) == TLS1_3_VERSION)
             || !TEST_true(SSL_version(clientssl) == TLS1_3_VERSION)
             || !(TEST_int_eq(SSL_quic_read_level(clientssl), ssl_encryption_application))
@@ -10976,6 +10979,7 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
 {
     static const char *server_str = "SERVER";
     static const char *client_str = "CLIENT";
+    int err;
 
     if (*sctx == NULL
             && (!TEST_true(create_ssl_ctx_pair(libctx, TLS_server_method(),
@@ -11053,8 +11057,10 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
     if (sess == NULL)
         return 1;
 
-    if (!TEST_true(create_ssl_connection(*serverssl, *clientssl,
-                                         SSL_ERROR_NONE)))
+    if (!TEST_int_eq(err = SSL_accept(*serverssl), -1)
+            || !TEST_int_eq(SSL_get_error(*serverssl, err), SSL_ERROR_WANT_READ)
+            || !TEST_true(create_bare_ssl_connection(*serverssl, *clientssl,
+                                                     SSL_ERROR_NONE, 0)))
         return 0;
 
     /* Deal with two NewSessionTickets */
@@ -11093,12 +11099,15 @@ static int test_quic_early_data(int tst)
     SSL *clientssl = NULL, *serverssl = NULL;
     int testresult = 0;
     SSL_SESSION *sess = NULL;
+    int err;
 
     if (!TEST_true(quic_setupearly_data_test(&cctx, &sctx, &clientssl,
                                              &serverssl, &sess, tst)))
         goto end;
 
-    if (!TEST_true(create_ssl_connection(serverssl, clientssl, SSL_ERROR_NONE))
+    if (!TEST_int_eq(err = SSL_accept(serverssl), -1)
+            || !TEST_int_eq(SSL_get_error(serverssl, err), SSL_ERROR_WANT_READ)
+            || !TEST_true(create_bare_ssl_connection(serverssl, clientssl, SSL_ERROR_NONE, 0))
             || !TEST_true(SSL_get_early_data_status(serverssl)))
         goto end;
 
