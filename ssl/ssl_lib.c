@@ -641,6 +641,38 @@ int SSL_clear(SSL *s)
     s->shared_sigalgs = NULL;
     s->shared_sigalgslen = 0;
 
+#if !defined(OPENSSL_NO_QUIC)
+    OPENSSL_free(s->ext.peer_quic_transport_params_draft);
+    s->ext.peer_quic_transport_params_draft = NULL;
+    s->ext.peer_quic_transport_params_draft_len = 0;
+    OPENSSL_free(s->ext.peer_quic_transport_params);
+    s->ext.peer_quic_transport_params = NULL;
+    s->ext.peer_quic_transport_params_len = 0;
+    s->quic_read_level = ssl_encryption_initial;
+    s->quic_write_level = ssl_encryption_initial;
+    s->quic_latest_level_received = ssl_encryption_initial;
+    while (s->quic_input_data_head != NULL) {
+        QUIC_DATA *qd;
+
+        qd = s->quic_input_data_head;
+        s->quic_input_data_head = qd->next;
+        OPENSSL_free(qd);
+    }
+    s->quic_input_data_tail = NULL;
+    BUF_MEM_free(s->quic_buf);
+    s->quic_buf = NULL;
+    s->quic_next_record_start = 0;
+    memset(s->client_hand_traffic_secret, 0, EVP_MAX_MD_SIZE);
+    memset(s->server_hand_traffic_secret, 0, EVP_MAX_MD_SIZE);
+    memset(s->client_early_traffic_secret, 0, EVP_MAX_MD_SIZE);
+    /*
+     * CONFIG - DON'T CLEAR
+     * s->ext.quic_transport_params
+     * s->ext.quic_transport_params_len
+     * s->quic_transport_version
+     * s->quic_method = NULL;
+     */
+#endif
     /*
      * Check to see if we were changed into a different method, if so, revert
      * back.
