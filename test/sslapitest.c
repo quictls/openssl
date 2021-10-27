@@ -9488,6 +9488,8 @@ static int test_quic_send_alert(SSL *ssl, enum ssl_encryption_level_t level, uin
 }
 
 static SSL_QUIC_METHOD quic_method = {
+    NULL,
+    NULL,
     test_quic_set_encryption_secrets,
     test_quic_add_handshake_data,
     test_quic_flush_flight,

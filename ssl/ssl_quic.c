@@ -215,11 +215,24 @@ int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
     return 1;
 }
 
-int SSL_CTX_set_quic_method(SSL_CTX *ctx, const SSL_QUIC_METHOD *quic_method)
+int SSL_CTX_set_quic_method(SSL_CTX *ctx, const SSL_QUIC_METHOD *qm)
 {
     if (ctx->method->version != TLS_ANY_VERSION)
         return 0;
-    ctx->quic_method = quic_method;
+
+    /*
+     * Ensure that both set_read_secret and set_write_secrt are both
+     * set to something or set to NULL.
+     * Also ensure that set_encryption_secret is NULL when read/write are
+     * non-NULL, and vice-versa
+     */ 
+    if ((qm->set_read_secret == NULL && qm->set_write_secret != NULL)
+        || (qm->set_read_secret != NULL && qm->set_write_secret == NULL)
+        || (qm->set_read_secret != NULL && qm->set_encryption_secrets != NULL)
+        || (qm->set_read_secret == NULL && qm->set_encryption_secrets == NULL))
+        return 0;
+    
+    ctx->quic_method = qm;
     ctx->options &= ~SSL_OP_ENABLE_MIDDLEBOX_COMPAT;
     return 1;
 }
@@ -239,6 +252,7 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
     uint8_t *s2c_secret = NULL;
     size_t len;
     const EVP_MD *md;
+    const SSL_CIPHER *c = NULL;
 
     if (!SSL_IS_QUIC(ssl))
         return 1;
@@ -261,7 +275,7 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
     }
 
     if (level == ssl_encryption_early_data) {
-        const SSL_CIPHER *c = SSL_SESSION_get0_cipher(ssl->session);
+        c = SSL_SESSION_get0_cipher(ssl->session);
         if (ssl->early_data_state == SSL_EARLY_DATA_CONNECTING
                 && ssl->max_early_data > 0
                 && ssl->session->ext.max_early_data == 0) {
@@ -281,25 +295,25 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
 
         md = ssl_md(ssl->ctx, c->algorithm2);
     } else {
-        md = ssl_handshake_md(ssl);
-        if (md == NULL) {
-            /* May not have selected cipher, yet */
-            const SSL_CIPHER *c = NULL;
+        /*
+         * It probably doesn't make sense to use an (external) PSK session,
+         * but in theory some kinds of external session caches could be
+         * implemented using it, so allow psksession to be used as well as
+         * the regular session.
+         */
+        if (ssl->session != NULL)
+            c = SSL_SESSION_get0_cipher(ssl->session);
+        else if (ssl->psksession != NULL)
+            c = SSL_SESSION_get0_cipher(ssl->psksession);
 
-            /*
-             * It probably doesn't make sense to use an (external) PSK session,
-             * but in theory some kinds of external session caches could be
-             * implemented using it, so allow psksession to be used as well as
-             * the regular session.
-             */
-            if (ssl->session != NULL)
-                c = SSL_SESSION_get0_cipher(ssl->session);
-            else if (ssl->psksession != NULL)
-                c = SSL_SESSION_get0_cipher(ssl->psksession);
-
-            if (c != NULL)
-                md = SSL_CIPHER_get_handshake_digest(c);
+        if (c == NULL) {
+            SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+            return 0;
         }
+        
+        md = ssl_handshake_md(ssl);
+        if (md == NULL)
+            md = SSL_CIPHER_get_handshake_digest(c);
     }
 
     if ((len = EVP_MD_size(md)) <= 0) {
@@ -308,16 +322,42 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
     }
 
     if (ssl->server) {
-        if (!ssl->quic_method->set_encryption_secrets(ssl, level, c2s_secret,
-                                                      s2c_secret, len)) {
-            SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
-            return 0;
+        if (ssl->quic_method->set_encryption_secrets == NULL) {
+            if (s2c_secret != NULL
+                    && !ssl->quic_method->set_write_secret(ssl, level, c, s2c_secret, len)) {
+                SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
+            if (c2s_secret != NULL
+                    && !ssl->quic_method->set_read_secret(ssl, level, c, c2s_secret, len)) {
+                SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
+        } else {
+            if (!ssl->quic_method->set_encryption_secrets(ssl, level, c2s_secret,
+                                                          s2c_secret, len)) {
+                SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
         }
     } else {
-        if (!ssl->quic_method->set_encryption_secrets(ssl, level, s2c_secret,
-                                                      c2s_secret, len)) {
-            SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
-            return 0;
+        if (ssl->quic_method->set_encryption_secrets == NULL) {
+            if (c2s_secret != NULL
+                    && !ssl->quic_method->set_write_secret(ssl, level, c, c2s_secret, len)) {
+                SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
+            if (s2c_secret != NULL
+                    && !ssl->quic_method->set_read_secret(ssl, level, c, s2c_secret, len)) {
+                SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
+        } else {
+            if (!ssl->quic_method->set_encryption_secrets(ssl, level, s2c_secret,
+                                                          c2s_secret, len)) {
+                SSLfatal(ssl, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
         }
     }
 
