@@ -186,6 +186,10 @@ The B<SSL_QUIC_METHOD> (B<struct ssl_quic_method_st>) describes the
 QUIC methods.
 
  struct ssl_quic_method_st {
+     int (*set_read_secret)(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
+                            const SSL_CIPHER *cipher, const uint8_t *secret,
+     int (*set_write_secret)(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
+                             const SSL_CIPHER *cipher, const uint8_t *secret,
      int (*set_encryption_secrets)(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
                                    const uint8_t *read_secret,
                                    const uint8_t *write_secret, size_t secret_len);
@@ -196,11 +200,25 @@ QUIC methods.
  };
  typedef struct ssl_quic_method_st SSL_QUIC_METHOD;
 
+set_write_secret() configures the write secret for the given encryption level.
+This function will always be called before an encryption level other than
+B<ssl_encryption_initial> is used. It is an error to set both set_write_secret()
+and set_encryption_secrets().
+
+set_read_secret() configures the read secret for the given encryption level.
+This function will always be called before an encryption level other than
+B<ssl_encryption_initial> is used. It is an error to set both set_read_secret()
+and set_encryption_secrets().
+
 set_encryption_secrets() configures the read and write secrets for the given
 encryption level. This function will always be called before an encryption
-level other than B<ssl_encryption_initial> is used. Note, however, that
-secrets for a level may be configured before TLS is ready to send or accept
-data at that level.
+level other than B<ssl_encryption_initial> is used.
+
+The use of set_write_secret() and set_read_secret() is preferred to
+set_encryption_secrets().
+
+Note, however, that secrets for a level may be configured before TLS is ready
+to send or accept data at that level.
 
 When reading packets at a given level, the QUIC implementation must send
 ACKs at the same level, so this function provides read and write secrets

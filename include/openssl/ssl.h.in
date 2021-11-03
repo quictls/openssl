@@ -2531,6 +2531,12 @@ typedef enum ssl_encryption_level_t {
 } OSSL_ENCRYPTION_LEVEL;
 
 struct ssl_quic_method_st {
+    int (*set_read_secret)(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
+                           const SSL_CIPHER *cipher, const uint8_t *secret,
+                           size_t secret_len);
+    int (*set_write_secret)(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
+                            const SSL_CIPHER *cipher, const uint8_t *secret,
+                            size_t secret_len);
     int (*set_encryption_secrets)(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
                                   const uint8_t *read_secret,
                                   const uint8_t *write_secret, size_t secret_len);
