@@ -30,8 +30,8 @@ breaking changes, and mappings for the large list of deprecated functions.
 
 ### Changes between 3.0.0 and 3.0.0+quic [xx XXX xxxx]
 
- * Fixed PEM_write_bio_PKCS8PrivateKey() to make it possible to use empty
-   passphrase strings.
+ * Fixed PEM_write_bio_PKCS8PrivateKey() and PEM_write_bio_PKCS8PrivateKey_nid()
+   to make it possible to use empty passphrase strings.
 
    *Darshan Sen*
 
