@@ -7,14 +7,14 @@ moved to
 
 This branch has the following locking performance fixes added:
 
-- [Avoid taking a write lock in ossl_provider_doall_activated()](https://github.com/openssl/openssl/pulls/20927)
-- [Avoid taking a write lock in RAND_get_rand_method()](https://github.com/openssl/openssl/pulls/20929)
-- [Don't take a write lock when freeing an EVP_PKEY](https://github.com/openssl/openssl/pulls/20932)
-- [When we're just reading EX_CALLBACK data just get a read lock](https://github.com/openssl/openssl/pulls/20943)
-- [Modify ENGINE_pkey_asn1_find_str() to use a read lock instead of a write](https://github.com/openssl/openssl/pulls/20950)*
-- [Optimise some X509_STORE related locking](https://github.com/openssl/openssl/pulls/20952)
-- [Optimise locking in rsa_get_blinding()](https://github.com/openssl/openssl/pulls/20953)
-- [Don't get a lock when querying the parent reseed_count (alternative version)](https://github.com/openssl/openssl/pulls/20970)*
+- [Avoid taking a write lock in ossl_provider_doall_activated()](https://github.com/openssl/openssl/pull/20927)
+- [Avoid taking a write lock in RAND_get_rand_method()](https://github.com/openssl/openssl/pull/20929)
+- [Don't take a write lock when freeing an EVP_PKEY](https://github.com/openssl/openssl/pull/20932)
+- [When we're just reading EX_CALLBACK data just get a read lock](https://github.com/openssl/openssl/pull/20943)
+- [Modify ENGINE_pkey_asn1_find_str() to use a read lock instead of a write](https://github.com/openssl/openssl/pull/20950)*
+- [Optimise some X509_STORE related locking](https://github.com/openssl/openssl/pull/20952)
+- [Optimise locking in rsa_get_blinding()](https://github.com/openssl/openssl/pull/20953)
+- [Don't get a lock when querying the parent reseed_count (alternative version)](https://github.com/openssl/openssl/pull/20970)*
 
 All the PR's were cloned locally. Most of the patches were done by using
 `format-patch` specifying the number of commits to format, and then doing
