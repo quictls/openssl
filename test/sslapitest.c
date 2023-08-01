@@ -10570,7 +10570,7 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
         return 0;
 
     if (idx == 2) {
-        clientpsk = create_a_psk(*clientssl);
+      clientpsk = create_a_psk(*clientssl, SHA384_DIGEST_LENGTH);
         if (!TEST_ptr(clientpsk)
                 || !TEST_true(SSL_SESSION_set_max_early_data(clientpsk,
                                                              0xffffffffu))
