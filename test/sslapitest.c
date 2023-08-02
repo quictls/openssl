@@ -10580,6 +10580,11 @@ static int test_quic_api_version(int clnt, int srvr)
     testresult = 1;
 
  end:
+    SSL_free(serverssl);
+    SSL_free(clientssl);
+    SSL_CTX_free(sctx);
+    SSL_CTX_free(cctx);
+
     return testresult;
 }
 
