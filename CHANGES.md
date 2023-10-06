@@ -22,6 +22,12 @@ OpenSSL Releases
 OpenSSL 3.1
 -----------
 
+### Changes between 3.1.3 and 3.1.3+quic [6 Oct 2023]
+
+ * Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 3.1.2 and 3.1.3 [19 Sep 2023]
 
  * Fix POLY1305 MAC implementation corrupting XMM registers on Windows.
@@ -287,12 +293,6 @@ The migration guide contains more detailed information related to new features,
 breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
-
-### Changes between 3.0.8 and 3.0.8+quic [7 Feb 2023]
-
- * Add QUIC API support from BoringSSL.
-
-   *Todd Short*
 
 ### Changes between 3.0.7 and 3.0.8 [7 Feb 2023]
 
