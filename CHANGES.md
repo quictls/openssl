@@ -22,6 +22,12 @@ OpenSSL Releases
 OpenSSL 3.1
 -----------
 
+### Changes between 3.1.3 and 3.1.3+quic [6 Oct 2023]
+
+ * Add QUIC API support from BoringSSL.
+
+   *Todd Short*
+
 ### Changes between 3.1.3 and 3.1.4 [24 Oct 2023]
 
  * Fix incorrect key and IV resizing issues when calling EVP_EncryptInit_ex2(),
@@ -295,12 +301,6 @@ The migration guide contains more detailed information related to new features,
 breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
-
-### Changes between 3.0.8 and 3.0.8+quic [7 Feb 2023]
-
- * Add QUIC API support from BoringSSL.
-
-   *Todd Short*
 
 ### Changes between 3.0.7 and 3.0.8 [7 Feb 2023]
 
