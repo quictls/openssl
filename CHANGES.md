@@ -22,7 +22,7 @@ OpenSSL Releases
 OpenSSL 3.1
 -----------
 
-### Changes between 3.1.3 and 3.1.3+quic [6 Oct 2023]
+### Changes between 3.1.4 and 3.1.4+quic [24 Oct 2023]
 
  * Add QUIC API support from BoringSSL.
 
