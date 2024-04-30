@@ -43,7 +43,7 @@ int quic_get_message(SSL *s, int *mt)
     }
 
     /* Copy buffered data */
-    memcpy(s->init_buf->data, s->quic_buf->data + qd->start, qd->length);
+    memcpy(s->init_buf->data, (void *)(qd + 1), qd->length);
     s->init_buf->length = qd->length;
     s->quic_input_data_head = qd->next;
     if (s->quic_input_data_head == NULL)
