@@ -61,15 +61,15 @@ jobs:
           sudo gem install mdl
           make md-nits
 
-  # This checks that we use ANSI C language syntax and semantics.
+  # This checks that we use standard C. Upstream said ANSI.
   # We are not as strict with libraries, but rather adapt to what's
   # expected to be available in a certain version of each platform.
-  check-ansi:
+  check-c-std:
     runs-on: ${{ github.server_url == 'https://github.com' && 'ubuntu-latest' || 'ubuntu-22.04-self-hosted' }}
     steps:
     - uses: actions/checkout@v4
     - name: config
-      run: CPPFLAGS=-ansi ./config --banner=Configured no-asm no-makedepend enable-buildtest-c++ enable-fips --strict-warnings -D_DEFAULT_SOURCE && perl configdata.pm --dump
+      run: CPPFLAGS=-std=c99 ./config --banner=Configured no-asm no-makedepend enable-buildtest-c++ enable-fips --strict-warnings -D_DEFAULT_SOURCE && perl configdata.pm --dump
     - name: make
       run: make -s -j4
 
