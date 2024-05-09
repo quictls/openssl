@@ -82,8 +82,8 @@ jobs:
     - name: localegen
       run: sudo locale-gen tr_TR.UTF-8
     - name: config
-      # enable-quic is on by default, but we leave it here to check we're testing the explicit enable somewhere
-      run: CC=gcc ./config --banner=Configured enable-fips enable-quic --strict-warnings && perl configdata.pm --dump
+      # enable-boring-quic-api is on by default, but we leave it here to check we're testing the explicit enable somewhere
+      run: CC=gcc ./config --banner=Configured enable-fips enable-boring-quic-api --strict-warnings && perl configdata.pm --dump
     - name: make
       run: make -s -j4
     - name: get cpu info
