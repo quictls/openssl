@@ -15,7 +15,6 @@ SSL_version - get the protocol information of a connection
 
  int SSL_is_dtls(const SSL *ssl);
  int SSL_is_tls(const SSL *ssl);
- int SSL_is_quic(const SSL *ssl);
 
  int SSL_version(const SSL *s);
 
@@ -36,7 +35,6 @@ SSL_is_dtls() returns 1 if the connection is using DTLS or 0 if not.
 
 SSL_is_tls() returns 1 if the connection is using SSL/TLS or 0 if not.
 
-SSL_is_quic() returns 1 if the connection is using QUIC or 0 if not.
 
 =head1 RETURN VALUES
 
