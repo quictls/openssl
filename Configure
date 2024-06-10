@@ -468,6 +468,7 @@ my @disablables = (
     "poly1305",
     "posix-io",
     "psk",
+    "quic",
     "rc2",
     "rc4",
     "rc5",
@@ -578,6 +579,7 @@ my @disable_cascades = (
                              "sm3", "sm4", "srp",
                              "srtp", "ssl3-method", "ssl-trace",
                              "ts", "ui-console", "whirlpool",
+                             "quic",
                              "fips-securitychecks" ],
     sub { $config{processor} eq "386" }
                         => [ "sse2" ],
@@ -585,7 +587,7 @@ my @disable_cascades = (
     "ssl3-method"       => [ "ssl3" ],
     "zlib"              => [ "zlib-dynamic" ],
     "des"               => [ "mdc2" ],
-    "ec"                => [ "ec2m", "ecdsa", "ecdh", "sm2", "gost" ],
+    "ec"                => [ "ec2m", "ecdsa", "ecdh", "sm2", "gost", "quic" ],
     "dgram"             => [ "dtls", "sctp" ],
     "sock"              => [ "dgram" ],
     "dtls"              => [ @dtls ],
@@ -636,6 +638,7 @@ my @disable_cascades = (
     "legacy"            => [ "md2" ],
 
     "cmp"               => [ "crmf" ],
+    "tls1_3"            => [ "quic" ],
 
     "fips"              => [ "fips-securitychecks", "acvp-tests" ],
 

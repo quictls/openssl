@@ -28,6 +28,12 @@ breaking changes, and mappings for the large list of deprecated functions.
 
 [Migration guide]: https://github.com/openssl/openssl/tree/master/doc/man7/migration_guide.pod
 
+### Changes between 3.0.14 and 3.0.14+quic [7 Jun 2024]
+
+* Add QUIC API support from BoringSSL
+
+   *Todd Short*
+
 ### Changes between 3.0.13 and 3.0.14 [4 Jun 2024]
 
  * Fixed potential use after free after SSL_free_buffers() is called.
