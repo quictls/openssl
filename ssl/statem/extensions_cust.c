@@ -533,6 +533,10 @@ int SSL_extension_supported(unsigned int ext_type)
 #ifndef OPENSSL_NO_SRTP
     case TLSEXT_TYPE_use_srtp:
 #endif
+#ifndef OPENSSL_BORING_QUIC_API
+    case TLSEXT_TYPE_quic_transport_parameters_draft:
+    case TLSEXT_TYPE_quic_transport_parameters:
+#endif
     case TLSEXT_TYPE_encrypt_then_mac:
     case TLSEXT_TYPE_supported_versions:
     case TLSEXT_TYPE_extended_master_secret:

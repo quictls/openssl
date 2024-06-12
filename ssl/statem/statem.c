@@ -374,8 +374,13 @@ static int state_machine(SSL_CONNECTION *s, int server)
          * If we are stateless then we already called SSL_clear() - don't do
          * it again and clear the STATELESS flag itself.
          */
+#ifndef OPENSSL_NO_BORING_QUIC_API
+        if ((s->s3.flags & TLS1_FLAGS_STATELESS) == 0 && !SSL_clear_not_quic(ssl))
+            return -1;
+#else
         if ((s->s3.flags & TLS1_FLAGS_STATELESS) == 0 && !SSL_clear(ssl))
             return -1;
+#endif
     }
 #ifndef OPENSSL_NO_SCTP
     if (SSL_CONNECTION_IS_DTLS(s) && BIO_dgram_is_sctp(SSL_get_wbio(ssl))) {
@@ -620,6 +625,11 @@ static SUB_STATE_RETURN read_state_machine(SSL_CONNECTION *s)
                  * In DTLS we get the whole message in one go - header and body
                  */
                 ret = dtls_get_message(s, &mt);
+#ifndef OPENSSL_NO_BORING_QUIC_API
+            } else if (SSL_CONNECTION_IS_QUIC(s)) {
+                /* QUIC behaves like DTLS -- all in one go. */
+                ret = quic_get_message(s, &mt);
+#endif
             } else {
                 ret = tls_get_message_header(s, &mt);
             }
@@ -649,8 +659,8 @@ static SUB_STATE_RETURN read_state_machine(SSL_CONNECTION *s)
                 return SUB_STATE_ERROR;
             }
 
-            /* dtls_get_message already did this */
-            if (!SSL_CONNECTION_IS_DTLS(s)
+            /* dtls_get_message/quic_get_message already did this */
+            if (!SSL_CONNECTION_IS_DTLS(s) && !SSL_CONNECTION_IS_QUIC(s)
                     && s->s3.tmp.message_size > 0
                     && !grow_init_buf(s, s->s3.tmp.message_size
                                          + SSL3_HM_HEADER_LENGTH)) {
@@ -668,6 +678,10 @@ static SUB_STATE_RETURN read_state_machine(SSL_CONNECTION *s)
                  * opportunity to do any further processing.
                  */
                 ret = dtls_get_message_body(s, &len);
+#ifndef OPENSSL_NO_BORING_QUIC_API
+            } else if (SSL_CONNECTION_IS_QUIC(s)) {
+                ret = quic_get_message_body(s, &len);
+#endif
             } else {
                 ret = tls_get_message_body(s, &len);
             }
@@ -960,6 +974,14 @@ static SUB_STATE_RETURN write_state_machine(SSL_CONNECTION *s)
 int statem_flush(SSL_CONNECTION *s)
 {
     s->rwstate = SSL_WRITING;
+#ifndef OPENSSL_NO_BORING_QUIC_API
+    if (SSL_CONNECTION_IS_QUIC(s)) {
+        if (!s->quic_method->flush_flight(SSL_CONNECTION_GET_SSL(s))) {
+            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
+            return 0;
+        }
+    } else
+#endif
     if (BIO_flush(s->wbio) <= 0) {
         return 0;
     }

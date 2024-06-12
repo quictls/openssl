@@ -90,8 +90,28 @@ int ssl3_do_write(SSL_CONNECTION *s, uint8_t type)
         s->statem.write_in_progress = 1;
     }
 
-    ret = ssl3_write_bytes(ssl, type, &s->init_buf->data[s->init_off],
-                           s->init_num, &written);
+#ifndef OPENSSL_NO_BORING_QUIC_API
+    if (SSL_CONNECTION_IS_QUIC(s)) {
+        if (type == SSL3_RT_HANDSHAKE) {
+            ret = s->quic_method->add_handshake_data(ssl, s->quic_write_level,
+                                                     (const uint8_t*)&s->init_buf->data[s->init_off],
+                                                     s->init_num);
+            if (!ret) {
+                ret = -1;
+                /* QUIC can't sent anything out sice the above failed */
+                ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
+            } else {
+                written = s->init_num;
+            }
+        } else {
+            /* QUIC doesn't use ChangeCipherSpec */
+            ret = -1;
+            ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+        }
+    } else
+#endif
+        ret = ssl3_write_bytes(ssl, type, &s->init_buf->data[s->init_off],
+                               s->init_num, &written);
     if (ret <= 0)
         return -1;
     if (type == SSL3_RT_HANDSHAKE)
@@ -685,6 +705,13 @@ CON_FUNC_RETURN tls_construct_finished(SSL_CONNECTION *s, WPACKET *pkt)
 
 CON_FUNC_RETURN tls_construct_key_update(SSL_CONNECTION *s, WPACKET *pkt)
 {
+#ifndef OPENSSL_NO_BORING_QUIC_API
+    if (SSL_CONNECTION_IS_QUIC(s)) {
+        /* TLS KeyUpdate is not used for QUIC, so this is an error. */
+        SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
+        return 0;
+    }
+#endif
     if (!WPACKET_put_bytes_u8(pkt, s->key_update)) {
         SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
         return CON_FUNC_ERROR;
@@ -706,6 +733,13 @@ MSG_PROCESS_RETURN tls_process_key_update(SSL_CONNECTION *s, PACKET *pkt)
         SSLfatal(s, SSL_AD_UNEXPECTED_MESSAGE, SSL_R_NOT_ON_RECORD_BOUNDARY);
         return MSG_PROCESS_ERROR;
     }
+
+#ifndef OPENSSL_NO_BORING_QUIC_API
+    if (SSL_CONNECTION_IS_QUIC(s)) {
+        SSLfatal(s, SSL_AD_UNEXPECTED_MESSAGE, SSL_R_UNEXPECTED_MESSAGE);
+        return MSG_PROCESS_ERROR;
+    }
+#endif
 
     if (!PACKET_get_1(pkt, &updatetype)
             || PACKET_remaining(pkt) != 0) {

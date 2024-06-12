@@ -77,7 +77,7 @@ int ssl3_send_alert(SSL_CONNECTION *s, int level, int desc)
 
 int ssl3_dispatch_alert(SSL *s)
 {
-    int i, j;
+    int i = 0, j = 0;
     void (*cb) (const SSL *ssl, int type, int val) = NULL;
     SSL_CONNECTION *sc = SSL_CONNECTION_FROM_SSL(s);
     OSSL_RECORD_TEMPLATE templ;
@@ -102,6 +102,16 @@ int ssl3_dispatch_alert(SSL *s)
     }
     templ.buf = &sc->s3.send_alert[0];
     templ.buflen = 2;
+#ifndef OPENSSL_NO_BORING_QUIC_API
+    if (SSL_CONNECTION_IS_QUIC(sc)) {
+        if (!sc->quic_method->send_alert(s, sc->quic_write_level,
+                                        sc->s3.send_alert[1])) {
+            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
+            return 0;
+        }
+        i = 1;
+    } else
+#endif
 
     if (RECORD_LAYER_write_pending(&sc->rlayer)) {
         if (sc->s3.alert_dispatch != SSL_ALERT_DISPATCH_RETRY) {

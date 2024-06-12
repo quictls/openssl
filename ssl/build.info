@@ -34,3 +34,9 @@ ENDIF
 IF[{- !$disabled{quic} -}]
   SOURCE[../libssl]=priority_queue.c event_queue.c
 ENDIF
+DEFINE[../libssl]=$AESDEF
+
+IF[{- !$disabled{'boring-quic-api'} -}]
+  SOURCE[../libssl]=ssl_quic.c statem/statem_quic.c
+ENDIF
+

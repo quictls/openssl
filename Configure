@@ -426,6 +426,7 @@ my @disablables = (
     "autoload-config",
     "bf",
     "blake2",
+    "boring-quic-api",
     "brotli",
     "brotli-dynamic",
     "buildtest-c++",
@@ -579,6 +580,7 @@ our %disabled = ( # "what"         => "comment"
                   "ktls"                => "default",
                   "md2"                 => "default",
                   "msan"                => "default",
+		  "quic"                => "default",
                   "rc5"                 => "default",
                   "sctp"                => "default",
                   "ssl3"                => "default",
@@ -613,6 +615,7 @@ my @disable_cascades = (
                              "srtp", "ssl3-method", "ssl-trace",
                              "tfo",
                              "ts", "ui-console", "whirlpool",
+                             "boring-quic-api",
                              "fips-securitychecks" ],
     sub { $config{processor} eq "386" }
                         => [ "sse2" ],
@@ -622,7 +625,7 @@ my @disable_cascades = (
     "brotli"            => [ "brotli-dynamic" ],
     "zstd"              => [ "zstd-dynamic" ],
     "des"               => [ "mdc2" ],
-    "ec"                => [ "ec2m", "ecdsa", "ecdh", "sm2", "gost", "ecx" ],
+    "ec"                => [ "ec2m", "ecdsa", "ecdh", "sm2", "gost", "ecx", "boring-quic-api" ],
     "dgram"             => [ "dtls", "quic", "sctp" ],
     "sock"              => [ "dgram", "tfo" ],
     "dtls"              => [ @dtls ],
@@ -632,7 +635,7 @@ my @disable_cascades = (
     "tls"               => [ @tls ],
     sub { 0 == scalar grep { !$disabled{$_} } @tls }
                         => [ "tls" ],
-    "tls1_3"            => [ "quic" ],
+    "tls1_3"            => [ "quic" , "boring-quic-api"],
     "quic"              => [ "unstable-qlog" ],
 
     "crypto-mdebug"     => [ "crypto-mdebug-backtrace" ],
@@ -675,6 +678,7 @@ my @disable_cascades = (
     "legacy"            => [ "md2" ],
 
     "cmp"               => [ "crmf" ],
+    "tls1_3"            => [ "boring-quic-api" ],
 
     "fips"              => [ "fips-securitychecks", "acvp-tests" ],
 
@@ -1212,6 +1216,11 @@ if (grep { /-rpath\b/ } ($user{LDFLAGS} ? @{$user{LDFLAGS}} : ())
     && !($disabled{asan} && $disabled{msan} && $disabled{ubsan})) {
     die "***** Cannot simultaneously use -rpath, shared libraries, and\n",
         "***** any of asan, msan or ubsan\n";
+}
+
+if (!($disabled{quic} || $disabled{"boring-quic-api"})) {
+    die "**** boring-quic-api and quic are incompatible options.\n",
+	"**** If you want to turn on quic explicitly disable boring-quic-api.\n";
 }
 
 # If no target was given, try guessing.

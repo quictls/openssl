@@ -61,15 +61,15 @@ jobs:
           sudo gem install mdl
           make md-nits
 
-  # This checks that we use ANSI C language syntax and semantics.
+  # This checks that we use standard C. Upstream said ANSI.
   # We are not as strict with libraries, but rather adapt to what's
   # expected to be available in a certain version of each platform.
-  check-ansi:
+  check-c-std:
     runs-on: ${{ github.server_url == 'https://github.com' && 'ubuntu-latest' || 'ubuntu-22.04-self-hosted' }}
     steps:
     - uses: actions/checkout@v4
     - name: config
-      run: CPPFLAGS=-ansi ./config --banner=Configured no-asm no-makedepend enable-buildtest-c++ enable-fips --strict-warnings -D_DEFAULT_SOURCE && perl configdata.pm --dump
+      run: CPPFLAGS=-std=c99 ./config --banner=Configured no-asm no-makedepend enable-buildtest-c++ enable-fips --strict-warnings -D_DEFAULT_SOURCE && perl configdata.pm --dump
     - name: make
       run: make -s -j4
 
@@ -82,8 +82,8 @@ jobs:
     - name: localegen
       run: sudo locale-gen tr_TR.UTF-8
     - name: config
-      # enable-quic is on by default, but we leave it here to check we're testing the explicit enable somewhere
-      run: CC=gcc ./config --banner=Configured enable-fips enable-quic --strict-warnings && perl configdata.pm --dump
+      # enable-boring-quic-api is on by default, but we leave it here to check we're testing the explicit enable somewhere
+      run: CC=gcc ./config --banner=Configured enable-fips enable-boring-quic-api --strict-warnings && perl configdata.pm --dump
     - name: make
       run: make -s -j4
     - name: get cpu info
@@ -491,7 +491,7 @@ jobs:
         mkdir ./install
     - name: config
       run: |
-        ../source/config --banner=Configured enable-fips enable-quic enable-acvp-tests --strict-warnings --prefix=$(cd ../install; pwd)
+        ../source/config --banner=Configured enable-fips  enable-acvp-tests --strict-warnings --prefix=$(cd ../install; pwd)
         perl configdata.pm --dump
       working-directory: ./build
     - name: make
@@ -536,7 +536,7 @@ jobs:
         mkdir ./install
     - name: config
       run: |
-        ../source/config --banner=Configured enable-fips enable-quic enable-acvp-tests --strict-warnings --prefix=$(cd ../install; pwd)
+        ../source/config --banner=Configured enable-fips enable-acvp-tests --strict-warnings --prefix=$(cd ../install; pwd)
         perl configdata.pm --dump
       working-directory: ./build
     - name: make

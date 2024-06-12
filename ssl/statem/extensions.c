@@ -71,6 +71,11 @@ static EXT_RETURN tls_construct_compress_certificate(SSL_CONNECTION *sc, WPACKET
 static int tls_parse_compress_certificate(SSL_CONNECTION *sc, PACKET *pkt,
                                           unsigned int context,
                                           X509 *x, size_t chainidx);
+#ifndef OPENSSL_NO_BORING_QUIC_API
+static int init_quic_transport_params(SSL_CONNECTION *s, unsigned int context);
+static int final_quic_transport_params_draft(SSL_CONNECTION *s, unsigned int context, int sent);
+static int final_quic_transport_params(SSL_CONNECTION *s, unsigned int context, int sent);
+#endif
 
 /* Structure to define a built-in extension */
 typedef struct extensions_definition_st {
@@ -411,6 +416,29 @@ static const EXTENSION_DEFINITION ext_defs[] = {
         tls_construct_certificate_authorities,
         tls_construct_certificate_authorities, NULL,
     },
+#ifndef OPENSSL_NO_BORING_QUIC_API
+    {
+        TLSEXT_TYPE_quic_transport_parameters_draft,
+        SSL_EXT_CLIENT_HELLO | SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS
+        | SSL_EXT_TLS_IMPLEMENTATION_ONLY | SSL_EXT_TLS1_3_ONLY,
+        init_quic_transport_params,
+        tls_parse_ctos_quic_transport_params_draft, tls_parse_stoc_quic_transport_params_draft,
+        tls_construct_stoc_quic_transport_params_draft, tls_construct_ctos_quic_transport_params_draft,
+        final_quic_transport_params_draft,
+    },
+    {
+        TLSEXT_TYPE_quic_transport_parameters,
+        SSL_EXT_CLIENT_HELLO | SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS
+        | SSL_EXT_TLS_IMPLEMENTATION_ONLY | SSL_EXT_TLS1_3_ONLY,
+        init_quic_transport_params,
+        tls_parse_ctos_quic_transport_params, tls_parse_stoc_quic_transport_params,
+        tls_construct_stoc_quic_transport_params, tls_construct_ctos_quic_transport_params,
+        final_quic_transport_params,
+    },
+#else
+    INVALID_EXTENSION,
+    INVALID_EXTENSION,
+#endif
     {
         /* Must be immediately before pre_shared_key */
         TLSEXT_TYPE_padding,
@@ -1931,3 +1959,43 @@ static int init_client_cert_type(SSL_CONNECTION *sc, unsigned int context)
     }
     return 1;
 }
+#ifndef OPENSSL_NO_BORING_QUIC_API
+static int init_quic_transport_params(SSL_CONNECTION *s, unsigned int context)
+{
+    return 1;
+}
+
+static int final_quic_transport_params_draft(SSL_CONNECTION *s, unsigned int context,
+                                             int sent)
+{
+    return 1;
+}
+
+static int final_quic_transport_params(SSL_CONNECTION *s, unsigned int context, int sent)
+{
+    /* called after final_quic_transport_params_draft */
+    if (SSL_CONNECTION_IS_QUIC(s)) {
+        if (s->ext.peer_quic_transport_params_len == 0
+                && s->ext.peer_quic_transport_params_draft_len == 0) {
+            SSLfatal(s, SSL_AD_MISSING_EXTENSION,
+                     SSL_R_MISSING_QUIC_TRANSPORT_PARAMETERS_EXTENSION);
+            return 0;
+        }
+        /* if we got both, discard the one we can't use */
+        if (s->ext.peer_quic_transport_params_len != 0
+                && s->ext.peer_quic_transport_params_draft_len != 0) {
+            if (s->quic_transport_version == TLSEXT_TYPE_quic_transport_parameters_draft) {
+                OPENSSL_free(s->ext.peer_quic_transport_params);
+                s->ext.peer_quic_transport_params = NULL;
+                s->ext.peer_quic_transport_params_len = 0;
+            } else {
+                OPENSSL_free(s->ext.peer_quic_transport_params_draft);
+                s->ext.peer_quic_transport_params_draft = NULL;
+                s->ext.peer_quic_transport_params_draft_len = 0;
+            }
+        }
+    }
+
+    return 1;
+}
+#endif
