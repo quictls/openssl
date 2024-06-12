@@ -27,6 +27,7 @@ OpenSSL 3.3
 -----------
 
 ### Changes Between 3.3.0 and 3.3.0+quic
+
  * Add QUIC API support from BoringSSL
 
  *Todd Short*
