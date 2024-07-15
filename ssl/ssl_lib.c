@@ -569,6 +569,7 @@ int SSL_clear(SSL *s)
 int SSL_clear_quic(SSL *s)
 {
     SSL_CONNECTION *sc = SSL_CONNECTION_FROM_SSL(s);
+
     OPENSSL_free(sc->ext.peer_quic_transport_params_draft);
     sc->ext.peer_quic_transport_params_draft = NULL;
     sc->ext.peer_quic_transport_params_draft_len = 0;
@@ -579,9 +580,7 @@ int SSL_clear_quic(SSL *s)
     sc->quic_write_level = ssl_encryption_initial;
     sc->quic_latest_level_received = ssl_encryption_initial;
     while (sc->quic_input_data_head != NULL) {
-        QUIC_DATA *qd;
-
-        qd = sc->quic_input_data_head;
+        QUIC_DATA *qd = sc->quic_input_data_head;
         sc->quic_input_data_head = qd->next;
         OPENSSL_free(qd);
     }
@@ -1515,9 +1514,7 @@ void ossl_ssl_connection_free(SSL *ssl)
     OPENSSL_free(s->ext.peer_quic_transport_params);
     BUF_MEM_free(s->quic_buf);
     while (s->quic_input_data_head != NULL) {
-        QUIC_DATA *qd;
-
-        qd = s->quic_input_data_head;
+        QUIC_DATA *qd = s->quic_input_data_head;
         s->quic_input_data_head = qd->next;
         OPENSSL_free(qd);
     }

@@ -98,7 +98,7 @@ int ssl3_do_write(SSL_CONNECTION *s, uint8_t type)
                                                      s->init_num);
             if (!ret) {
                 ret = -1;
-                /* QUIC can't sent anything out sice the above failed */
+                /* QUIC can't sent anything out since the above failed */
                 ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
             } else {
                 written = s->init_num;

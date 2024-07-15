@@ -15,6 +15,7 @@ should use the official OpenSSL distributions.
 The APIs here are used by Microsoft's
 [MsQuic](https://github.com/microsoft/msquic) and Google's
 [Chromium QUIC](https://chromium.googlesource.com/chromium/src/+/master/net/quic/)
+QUIC implementations, among others.
 
 We are not in competition with OpenSSL project. We informed them of
 our plans to fork the code before we went public. We do not speak for the
@@ -28,12 +29,12 @@ As stated in their blog post, the OpenSSL team is focused on their 3.0 release
 There is a community need for a QUIC-capable TLS library. This fork is intended
 as stopgap solution to enable higher level frameworks and runtimes to use QUIC
 with the proven and reliable TLS functionality from OpenSSL. This fork will be
-maintained until OpenSSL officially provides reasonable support for QUIC
+maintained until OpenSSL officially provides reasonable support for other QUIC
 implementations.
 
 This fork can be considered a supported version of
 [OpenSSL PR 8797](https://github.com/openssl/openssl/pull/8797).
-We will endeavor to track OpenSSL releases within a day or so, and there is an
+We will endeavor to track OpenSSL releases within days, and there is an
 item below about how we'll follow their tagging.
 
 On to the questions and answers.
