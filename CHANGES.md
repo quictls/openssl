@@ -22,6 +22,12 @@ OpenSSL Releases
 OpenSSL 3.1
 -----------
 
+### Changes between 3.1.7 and 3.1.7+quic [3 Sep 2024]
+
+* Added BoringSSL QUIC API support
+
+    *Todd Short*
+
 ### Changes between 3.1.6 and 3.1.7 [3 Sep 2024]
 
  * Fixed possible denial of service in X.509 name checks.
