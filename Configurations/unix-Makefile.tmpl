@@ -1194,8 +1194,6 @@ check-format: ## Evaluate C code according to OpenSSL coding standards
 			$(SRCS) \$(CRYPTOHEADERS) $(SSLHEADERS) )
 
 generate_apps:
-	( cd $(SRCDIR); $(PERL) VMS/VMSify-conf.pl \
-				< apps/openssl.cnf > apps/openssl-vms.cnf )
 
 generate_crypto_bn:
 	( cd $(SRCDIR); $(PERL) crypto/bn/bn_prime.pl > crypto/bn/bn_prime.h )

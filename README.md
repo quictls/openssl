@@ -1,5 +1,6 @@
 What This Is
 ============
+
 Long ago QUIC was created. For the past years Akamai and Microsoft have
 collaborated on maintaining QUIC support via the BoringSSL APIs. However,
 OpenSSL focused on their own implementation, deprioritizing other features and
@@ -41,7 +42,6 @@ What about sonames and the like?
 
 So far we haven't changed them, but we likely will. At the same time API and
 generally ABI compatibility is a big priority for us.
-
 
 Who are you?
 ------------
