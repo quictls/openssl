@@ -587,7 +587,6 @@ int SSL_clear_quic(SSL *s)
     sc->quic_input_data_tail = NULL;
     BUF_MEM_free(sc->quic_buf);
     sc->quic_buf = NULL;
-    sc->quic_next_record_start = 0;
     memset(sc->client_hand_traffic_secret, 0, EVP_MAX_MD_SIZE);
     memset(sc->server_hand_traffic_secret, 0, EVP_MAX_MD_SIZE);
     memset(sc->client_early_traffic_secret, 0, EVP_MAX_MD_SIZE);

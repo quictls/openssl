@@ -64,7 +64,8 @@ jobs:
   # This checks that we use standard C. Upstream said ANSI.
   # We are not as strict with libraries, but rather adapt to what's
   # expected to be available in a certain version of each platform.
-  check-c-std:
+  # It's C99 time
+  check-c99:
     runs-on: ${{ github.server_url == 'https://github.com' && 'ubuntu-latest' || 'ubuntu-22.04-self-hosted' }}
     steps:
     - uses: actions/checkout@v4

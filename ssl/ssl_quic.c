@@ -157,7 +157,8 @@ OSSL_ENCRYPTION_LEVEL SSL_quic_write_level(const SSL *ssl)
 int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
                           const uint8_t *data, size_t len)
 {
-    size_t l, offset;
+    size_t l;
+    size_t fragment_length;
 
     if (!SSL_is_quic(ssl)) {
         ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
