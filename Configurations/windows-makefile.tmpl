@@ -557,7 +557,7 @@ install_dev: install_runtime_libs
 	@"$(PERL)" "$(SRCDIR)\util\copy.pl" "$(SRCDIR)\ms\applink.c" \
 				       "$(INSTALLTOP)\include\openssl"
 	@{- output_on() if $disabled{uplink}; "" -}
-	@"$(PERL)" "$(SRCDIR)\util\copy.pl" "-exclude_re=/__DECC_" \
+	@"$(PERL)" "$(SRCDIR)\util\copy.pl" \
 				       "$(SRCDIR)\include\openssl\*.h" \
 				       "$(INSTALLTOP)\include\openssl"
 	@"$(PERL)" "$(SRCDIR)\util\copy.pl" "$(BLDDIR)\include\openssl\*.h" \
