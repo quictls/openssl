@@ -1,114 +1,52 @@
 What This Is
 ============
+Long ago QUIC was created. For the past years Akamai and Microsoft have
+collaborated on maintaining QUIC support via the BoringSSL APIs. However,
+OpenSSL focused on their own implementation, deprioritizing other features and
+improvements.
 
-This is a fork of [OpenSSL](https://www.openssl.org) to enable QUIC. In addition
-to the website, the official source distribution is at
-<https://github.com/openssl/openssl>. The OpenSSL `README` can be found at
-[README-OpenSSL.md](https://github.com/quictls/openssl/blob/openssl-3.1.5%2Bquic/README-OpenSSL.md)
+We're focused on treating the most important security protocol in the world,
+and the implementation that powers cryptography across the open source
+ecosystem with the importance and care it deserves.
 
-This fork adds APIs that can be used by QUIC implementations for connection
-handshakes. Quoting the IETF Working group
-[charter](https://datatracker.ietf.org/wg/quic/about/), QUIC is a "UDP-based,
-stream-multiplexing, encrypted transport protocol." If you don't need QUIC, you
-should use the official OpenSSL distributions.
-
-The APIs here are used by Microsoft's
-[MsQuic](https://github.com/microsoft/msquic) and Google's
-[Chromium QUIC](https://chromium.googlesource.com/chromium/src/+/master/net/quic/)
-QUIC implementations, among others.
-
-We are not in competition with OpenSSL project. We informed them of
-our plans to fork the code before we went public. We do not speak for the
-OpenSSL project, and can only point to a
-[blog post](https://www.openssl.org/blog/blog/2020/02/17/QUIC-and-OpenSSL/) and
-[openssl-project email](https://github.com/quictls/openssl/discussions/54)
-that provides their view of QUIC support.
-
-As stated in their blog post, the OpenSSL team is focused on their 3.0 release
-(released 2021-09-07), and does not intend to add QUIC functionality to 1.1.x.
-There is a community need for a QUIC-capable TLS library. This fork is intended
-as stopgap solution to enable higher level frameworks and runtimes to use QUIC
-with the proven and reliable TLS functionality from OpenSSL. This fork will be
-maintained until OpenSSL officially provides reasonable support for other QUIC
-implementations.
-
-This fork can be considered a supported version of
-[OpenSSL PR 8797](https://github.com/openssl/openssl/pull/8797).
-We will endeavor to track OpenSSL releases within days, and there is an
-item below about how we'll follow their tagging.
-
-On to the questions and answers.
+We're going to keep API compatibility, but add new APIs that serve
+programmers better, remove old cruft and deepen deprecation to help migrate
+to a better world
 
 What about branches?
---------------------
 
-We don't want to conflict with OpenSSL branch names. Our current plan is to append
-`+quic`. Release tags are likely to be the QUIC branch with `-releaseX` appended.
-For example, the OpenSSL tag `openssl-3.0.0` would have a branch named
-`openssl-3.0.0+quic` and a release tag of `openssl-3.0.0+quic-release1`.
+What about FIPS?
+----------------
 
-How are you keeping current with OpenSSL?
------------------------------------------
-
-(In other words, "What about rebasing?")
-
-Our plan is to always rebase on top of an upstream release tag. In particular:
-
-- The changes for QUIC will always be at the tip of the branch -- you will know what
-  is from the original OpenSSL and what is for QUIC.
-- New versions are quickly created once upstream creates a new tag.
-- The use of git commands (such as `cherry`) can be used to ensure that all changes
-  have moved forward with minimal or no changes. You will be able to see
-  "QUIC: Add X" on all branches and the commit itself will be nearly identical on
-  all branches, and any changes to that can be easily identified.
-
-What about library names?
--------------------------
-
-Library names will be the same, but will use a different version number. The version
-numbers for the current OpenSSL libraries are `1.1` (for the 1.1.0 and 1.1.1 branches)
-and `3` (for the 3.0 branch). We will be prefixing `81` (ASCII for 'Q') to
-the version numbers to generate a unique version number.
-
-- `libcrypto.so.81.3` vs `libcrypto.so.3`
-- `libcrypto.so.81.1.1` vs `libcrypto.so.1.1`
-- `libssl.so.81.3` vs `libssl.so.3`
-- `libssl.so.81.1.1` vs `libssl.so.1.1`
-
-The SONAME of these libraries are all different, guaranteeing the correct library
-will be used.
-
-...and the executable?
-----------------------
-
-We currently do not have any plans to change the name, mainly because we
-haven't made any changes there. If you see a need, please open an issue.
-
-The `openssl version` command will report that it is `+quic` enabled.
-
-...and FIPS?
-------------
-
-We are not doing anything with FIPS. This is actually good news: you should
-be able to load the OpenSSL 3.0 FIPS module into an application built against
-this fork and everything should Just Work&#8482;.
+Thanks to the provider interface we can load the OpenSSL FIPS module, and
+will continue to do so. At some point we'll discuss how to get a FIPS
+certification that really works for the open source world.
 
 How can I contribute?
 ---------------------
 
-We want any code here to be acceptable to OpenSSL. This means that all contributors
-must have signed the appropriate
-[contributor license agreements](https://www.openssl.org/policies/cla.html). We
-will not ask for copies of any paperwork, you just need to tell us that you've
-done so (and we might verify with OpenSSL). We are only interested in making it
-easier and better for at least the mentioned QUIC implementations to use a variant
-of OpenSSL. If you have a pull request that changes the TLS protocol, or adds
-assembly support for a new CPU, or otherwise is not specific to enabling QUIC,
-please contribute that to OpenSSL. This fork is intended to be a clean extension
-to OpenSSL, with the deltas being specific to QUIC.
+Open a PR! Your code must be Apache 2 licensed. We are interested in
+expanding compatibility with BoringSSL and LibreSSL, simplifying and
+improving the security of some grotty code, cleaning this up, and new
+features, even before RFCs are final.
+
+We're also interested in KEM interfaces and postquantum algorithms, and if an
+issue appeals to you, feel free to jump in and get started on it.
+
+However, there's a bunch of design stuff that also needs to happen, but we'll
+make sure to have the conversation in an open manner.
+
+What about sonames and the like?
+--------------------------------
+
+So far we haven't changed them, but we likely will. At the same time API and
+generally ABI compatibility is a big priority for us.
+
 
 Who are you?
 ------------
 
 This is a collaborative effort between [Akamai](https://www.akamai.com) and
-[Microsoft](https://www.microsoft.com). We welcome anyone to contribute!
+[Microsoft](https://www.microsoft.com). We welcome anyone to contribute and
+join. We are working on setting up more formal structures and welcome
+participation beyond writing code as well.
