@@ -1735,6 +1735,7 @@ struct ssl_connection_st {
     QUIC_DATA *quic_input_data_head;
     QUIC_DATA *quic_input_data_tail;
     const SSL_QUIC_METHOD *quic_method;
+    size_t quic_next_record_start;
 # endif
     /*
      * Parsed form of the ClientHello, kept around across client_hello_cb
