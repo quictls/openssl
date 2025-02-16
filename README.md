@@ -1,6 +1,14 @@
 What This Is
 ============
 
+**This repository is now archived. We only tracked up through 3.1.8 and then, because
+it became too difficult as OpenSSL added more code to their implementation of
+QUIC, we moved to becoming a full fork of OpenSSL. We encourage you to see that
+respository's [README](https://github.com/quictls/quictls/blob/main/README.md) If there
+features you would like to see from more recent OpenSSL releases, please
+[report an issue](https://github.com/quictls/quictls/issues), or -- better yet :) --
+make a [pull request](https://github.com/quictls/quictls/pulls).**
+
 This is a fork of [OpenSSL](https://www.openssl.org) to enable QUIC. In addition
 to the website, the official source distribution is at
 <https://github.com/openssl/openssl>. The OpenSSL `README` can be found at
@@ -15,6 +23,7 @@ should use the official OpenSSL distributions.
 The APIs here are used by Microsoft's
 [MsQuic](https://github.com/microsoft/msquic) and Google's
 [Chromium QUIC](https://chromium.googlesource.com/chromium/src/+/master/net/quic/)
+among others (ngHTTP, etc).
 
 We are not in competition with OpenSSL project. We informed them of
 our plans to fork the code before we went public. We do not speak for the
