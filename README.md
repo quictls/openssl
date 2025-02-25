@@ -9,6 +9,9 @@ features you would like to see from more recent OpenSSL releases, please
 [report an issue](https://github.com/quictls/quictls/issues), or -- better yet :) --
 make a [pull request](https://github.com/quictls/quictls/pulls).**
 
+**We encourage everyone to move to using the new QUICTLS project. If you support
+both, we suggest you refer to this as `OldQuicTLS` and the new fork as `QuicTLS`**
+
 This is a fork of [OpenSSL](https://www.openssl.org) to enable QUIC. In addition
 to the website, the official source distribution is at
 <https://github.com/openssl/openssl>. The OpenSSL `README` can be found at
