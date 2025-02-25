@@ -128,7 +128,8 @@ OSSL_ENCRYPTION_LEVEL SSL_quic_write_level(const SSL *ssl)
 int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
                           const uint8_t *data, size_t len)
 {
-    size_t l, offset;
+    size_t l;
+    size_t fragment_length;
 
     if (!SSL_IS_QUIC(ssl)) {
         ERR_raise(ERR_LIB_SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
@@ -146,54 +147,46 @@ int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
     if (len == 0)
         return 1;
 
-    if (ssl->quic_buf == NULL) {
-        BUF_MEM *buf;
-        if ((buf = BUF_MEM_new()) == NULL) {
-            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
-            return 0;
-        }
-        if (!BUF_MEM_grow(buf, SSL3_RT_MAX_PLAIN_LENGTH)) {
-            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
-            BUF_MEM_free(buf);
-            return 0;
-        }
-        ssl->quic_buf = buf;
-        /* We preallocated storage, but there's still no *data*. */
-        ssl->quic_buf->length = 0;
-        buf = NULL;
+    fragment_length = 0;
+    if (ssl->quic_buf != NULL) {
+        fragment_length = ssl->quic_buf->length;
     }
 
     /* A TLS message must not cross an encryption level boundary */
-    if (ssl->quic_buf->length != ssl->quic_next_record_start
-            && level != ssl->quic_latest_level_received) {
+    if (fragment_length != 0 && level != ssl->quic_latest_level_received) {
         ERR_raise(ERR_LIB_SSL, SSL_R_WRONG_ENCRYPTION_LEVEL_RECEIVED);
         return 0;
     }
     ssl->quic_latest_level_received = level;
 
-    offset = ssl->quic_buf->length;
-    if (!BUF_MEM_grow(ssl->quic_buf, offset + len)) {
-        ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
-        return 0;
+    if (fragment_length != 0) {
+        /*
+         * If we have a partial record, copy the data into the buffer, and
+         * parse records from it.
+         */
+        if (!BUF_MEM_grow(ssl->quic_buf, fragment_length + len)) {
+            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
+            return 0;
+        }
+        memcpy(ssl->quic_buf->data + fragment_length, data, len);
+        data = (const uint8_t *)ssl->quic_buf->data;
+        len = ssl->quic_buf->length;
     }
-    memcpy(ssl->quic_buf->data + offset, data, len);
 
     /* Split on handshake message boundaries */
-    while (ssl->quic_buf->length > ssl->quic_next_record_start
-                                   + SSL3_HM_HEADER_LENGTH) {
+    while (len >= SSL3_HM_HEADER_LENGTH) {
         QUIC_DATA *qd;
         const uint8_t *p;
 
         /* TLS Handshake message header has 1-byte type and 3-byte length */
-        p = (const uint8_t *)ssl->quic_buf->data
-            + ssl->quic_next_record_start + 1;
+        p = data + 1;
         n2l3(p, l);
         l += SSL3_HM_HEADER_LENGTH;
         /* Don't allocate a QUIC_DATA if we don't have a full record */
-        if (l > ssl->quic_buf->length - ssl->quic_next_record_start)
+        if (l > len)
             break;
 
-        qd = OPENSSL_zalloc(sizeof(*qd));
+        qd = OPENSSL_zalloc(sizeof(*qd) + l);
         if (qd == NULL) {
             ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
             return 0;
@@ -201,15 +194,51 @@ int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
 
         qd->next = NULL;
         qd->length = l;
-        qd->start = ssl->quic_next_record_start;
         qd->level = level;
+        memcpy((void *)(qd + 1), data, l);
 
         if (ssl->quic_input_data_tail != NULL)
             ssl->quic_input_data_tail->next = qd;
         else
             ssl->quic_input_data_head = qd;
         ssl->quic_input_data_tail = qd;
-        ssl->quic_next_record_start += l;
+
+        /* Remove the now-consumed data. */
+        data += l;
+        len -= l;
+    }
+
+    /*
+     * If we have any unread data, we need to save it.
+     */
+    if (len > 0) {
+        if (ssl->quic_buf != NULL) {
+            if (data == (const uint8_t *)ssl->quic_buf->data) {
+                /* It's already in the buffer; no need to do anything.. */
+                return 1;
+            }
+        } else {
+            BUF_MEM *buf;
+            if ((buf = BUF_MEM_new()) == NULL) {
+                ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
+                return 0;
+            }
+            ssl->quic_buf = buf;
+        }
+        /*
+         * Note: 'data' might be in this buffer, but if that's the case,
+         * we're going to be shrinking the buffer, so the pointer will not be
+         * invalidated.  We do need to use memmove() and not memcpy(), though.
+         */
+        if (!BUF_MEM_grow(ssl->quic_buf, len)) {
+            ERR_raise(ERR_LIB_SSL, ERR_R_INTERNAL_ERROR);
+            return 0;
+        }
+        memmove(ssl->quic_buf->data, data, len);
+    } else {
+        if (ssl->quic_buf != NULL) {
+            ssl->quic_buf->length = 0;
+        }
     }
 
     return 1;
