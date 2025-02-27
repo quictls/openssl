@@ -22,6 +22,12 @@ OpenSSL Releases
 OpenSSL 3.1
 -----------
 
+### Changes between 3.1.8 and 3.1.8+quic [27 Feb 2024]
+
+* Added BoringSSL QUIC API support
+
+    *Todd Short*
+
 ### Changes between 3.1.7 and 3.1.8 [11 Feb 2025]
 
  * Fixed timing side-channel in ECDSA signature computation.
